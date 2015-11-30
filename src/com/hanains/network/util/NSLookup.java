@@ -2,7 +2,6 @@ package com.hanains.network.util;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class NSLookup {
@@ -20,7 +19,7 @@ public class NSLookup {
 				try {
 					inetAddress = InetAddress.getAllByName(hostname);
 					for(int i=0; i<inetAddress.length; i++){
-						System.out.println(InetAddress.getByName(hostname).getHostName() + " : " + InetAddress.getByName(hostname).getHostAddress());
+						System.out.println(inetAddress[i].getHostName() + " : " + inetAddress[i].getHostAddress());
 					}
 				} catch (UnknownHostException e) {
 					// TODO Auto-generated catch block
