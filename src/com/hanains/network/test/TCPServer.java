@@ -1,6 +1,8 @@
 package com.hanains.network.test;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -32,9 +34,35 @@ public class TCPServer {
 			int remoteHostPort = inetSocketAddress.getPort();
 			System.out.println("[서버]연결됨 from " + remoteHostAddress + ":" + remoteHostPort);
 			
-			// 7.소켓 닫기
-			if(socket.isClosed() == false){
-				socket.close();
+			// 5.IOStream 받아오기
+			InputStream inputStream = socket.getInputStream();
+			OutputStream outputStream = socket.getOutputStream();
+			
+			// 6.데이터 읽기
+			try{
+				byte[] buffer = new byte[256];
+				while(true){
+					int readByteCount = inputStream.read(buffer);
+					if(readByteCount < 0){
+						System.out.println("[서버]클라이언트로 부터 연결 끊김");
+						break;
+					}
+					String data = new String(buffer,0,readByteCount);
+					System.out.println("[서버]수신 데이터:" + data);
+					
+					// 7.데이터 보내기
+					outputStream.write(data.getBytes("UTF-8"));
+					outputStream.flush();
+				}
+			}catch(IOException e){
+				System.out.println("[서버]에러:" + e);
+			}finally{
+				// 8.자원 정리
+				inputStream.close();
+				outputStream.close();
+				if(socket.isClosed() == false){
+					socket.close();
+				}
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
