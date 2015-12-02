@@ -36,7 +36,7 @@ public class EchoClient {
 			while (true) {
 				System.out.print(">> ");
 				scanner = new Scanner(System.in);
-				String str = scanner.nextLine();
+				String str = scanner.nextLine() + "\r\n";
 				outputStream.write(str.getBytes("UTF-8"));
 
 				int readByCount = inputStream.read(buffer);
