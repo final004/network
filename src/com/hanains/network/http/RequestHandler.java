@@ -58,13 +58,13 @@ public class RequestHandler extends Thread {
 			SimpleHttpServer.consolLog("==================================================");
 
 			// 요청처리
-			String[] tokens = request.split("");
-			if("GET".equals(tokens[0])){
+			String[] tokens = request.split(" ");
+			if ("GET".equals(tokens[0])) {
 				responseStaticResource(outputStream, tokens[1], tokens[2]);
-			}else{
+			} else {
 				response400Error(outputStream, tokens[2]);
 			}
-			
+
 		} catch (Exception ex) {
 			SimpleHttpServer.consolLog("error:" + ex);
 		} finally {
@@ -88,35 +88,55 @@ public class RequestHandler extends Thread {
 		}
 
 	}
+
 	private void responseStaticResource(OutputStream outputStream, String url, String protocol) throws IOException {
-		
+
 		// default html 처리
-		
+		if ("/".equals(url)) {
+			url = "/index.html";
+		}
 		// File 객체 생성
-		File file = new File( "./webapp" + url );
-		
+		File file = new File("./webapp" + url);
 		// File 존재 여부 체크
-		if(file.exists() == false){
+		if (file.exists() == false) {
 			response404Error(outputStream, protocol);
 			return;
 		}
-		
-		if("/".equals(url)){
-			url = "/index.html";
-		}
-		
 		Path path = file.toPath();
-		byte[] body = Files.readAllBytes( path ); 
-		
-		outputStream.write( "HTTP/1.1 200 OK\r\n".getBytes( "UTF-8" ));
-		outputStream.write( "Content-Type:image/html\r\n".getBytes( "UTF-8" ) );
-		outputStream.write( "\r\n".getBytes() );
-		outputStream.write( body );	
+		byte[] body = Files.readAllBytes(path);
+
+		//outputStream.write("url protocol 200 OK\r\n".getBytes("UTF-8"));
+		//outputStream.write("Content-Type:text/html charset=UTF-8\r\n".getBytes("UTF-8"));
+		//outputStream.write("\r\n".getBytes());
+		outputStream.write(body);
 	}
-	private void response400Error(OutputStream outputStream, String error){
-		
+
+	private void response400Error(OutputStream outputStream, String error) {
+		try{
+			File file = new File("./webapp/error/400.html");
+			Path path = file.toPath();
+			byte[] body = Files.readAllBytes(path);
+			outputStream.write((error + " 400 Bad Request\r\n").getBytes());
+			outputStream.write("Content-Type:text/html\r\n".getBytes());
+			outputStream.write("\r\n".getBytes());
+			outputStream.write(body);
+		}catch(IOException e){
+			e.printStackTrace();
+		}
 	}
-	private void response404Error(OutputStream outputStream, String protocol){
-		
+
+	private void response404Error(OutputStream outputStream, String protocol) {
+		try{
+			File file = new File("./webapp/error/404.html");
+			Path path = file.toPath();
+			byte[] body = Files.readAllBytes(path);
+			outputStream.write((protocol + " 404 File Not Found\r\n").getBytes());
+			outputStream.write("Content-Type:text/html\r\n".getBytes());
+			outputStream.write("\r\n".getBytes());
+			outputStream.write(body);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
