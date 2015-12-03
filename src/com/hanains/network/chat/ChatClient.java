@@ -15,6 +15,7 @@ public class ChatClient {
 	private static final String SERVER_IP = "192.168.1.10";
 	private static final int SERVER_PORT = 8080;
 	private static String nickname;
+	private static String data;
 
 	private static PrintWriter printWriter;
 	private static BufferedReader bufferedReader;
@@ -30,8 +31,7 @@ public class ChatClient {
 			System.out.println("[클라이언트]서버연결 성공");
 
 			bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
-			printWriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8),
-					true);
+			printWriter = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8),true);
 
 			System.out.print("닉네임>> ");
 			scanner = new Scanner(System.in);
@@ -43,8 +43,7 @@ public class ChatClient {
 			thread.start();
 
 			while (true) {
-			
-				System.out.println(nickname + ">> ");
+//				System.out.println(nickname + ">> ");
 				String input = scanner.nextLine();
 				if ("quit".equals(input)) {
 					doQuit();
@@ -55,8 +54,8 @@ public class ChatClient {
 
 //				printWriter.println(input);
 //				printWriter.flush();
-//				input = bufferedReader.readLine();
-//				System.out.println("<<" + input);
+//				data = bufferedReader.readLine();
+//				System.out.println("<- " + data);
 			}
 
 		} catch (IOException e) {
@@ -65,9 +64,12 @@ public class ChatClient {
 			consoleLog("Client " + socket.getPort() + "error:" + e);
 		} finally {
 			try {
-				if (printWriter != null) {
-					printWriter.close();
-				}
+//				if (bufferedReader != null) {
+//					bufferedReader.close();
+//				}
+//				if (printWriter != null) {
+//					printWriter.close();
+//				}
 				if (socket != null && socket.isClosed() == false) {
 					socket.close();
 				}
@@ -78,19 +80,18 @@ public class ChatClient {
 		}
 	}
 
-	private static void doMessage(String input) {
-		// TODO Auto-generated method stub
-		printWriter.println("message:" + input);
-		printWriter.flush();
-	}
-
 	private static void doQuit() {
 		// TODO Auto-generated method stub
 		String data = nickname + "님이 퇴장하였습니다.";
 		printWriter.println("quit:" + data);
 		printWriter.flush();
 	}
-
+	private static void doMessage(String input) {
+		// TODO Auto-generated method stub
+		printWriter.println("message:" + input);
+		printWriter.flush();
+	}
+	
 	public static void consoleLog(String message) {
 		System.out.println("[Client] " + message);
 	}

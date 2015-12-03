@@ -32,7 +32,7 @@ public class ChatClientReceiveThread extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
-//		finally {
+		finally {
 //			try {
 //				if (bufferedReader != null) {
 //					bufferedReader.close();
@@ -40,6 +40,6 @@ public class ChatClientReceiveThread extends Thread {
 //			} catch (IOException e) {
 //				e.printStackTrace();
 //			}
-//		}
+		}
 	}
 }

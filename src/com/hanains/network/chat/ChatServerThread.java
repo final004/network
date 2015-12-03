@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -30,10 +29,10 @@ public class ChatServerThread extends Thread {
 	public void run() {
 		// TODO Auto-generated method stub
 		
-		InetSocketAddress inetSocketAddress = (InetSocketAddress)socket.getRemoteSocketAddress();
-		String remoteHostAddress = inetSocketAddress.getAddress().getHostAddress();
-		int remoteHostPort = inetSocketAddress.getPort();
-		ChatServer.consoleLog("연결됨 from " + remoteHostAddress + ":" + remoteHostPort);
+//		InetSocketAddress inetSocketAddress = (InetSocketAddress)socket.getRemoteSocketAddress();
+//		String remoteHostAddress = inetSocketAddress.getAddress().getHostAddress();
+//		int remoteHostPort = inetSocketAddress.getPort();
+//		ChatServer.consoleLog("연결됨 from " + remoteHostAddress + ":" + remoteHostPort);
 		
 		try {
 			bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
@@ -71,26 +70,6 @@ public class ChatServerThread extends Thread {
 		}
 	}
 	
-	private void doQuit(PrintWriter printWriter) {
-		// TODO Auto-generated method stub
-		removeWriter(printWriter);
-		String data = nickname + "님이 퇴장하였습니다.";
-		printWriter.println("quit:" + data);
-		broadcast("message:" + nickname + ":" + data);
-	}
-
-	private void removeWriter(PrintWriter printWriter) {
-		// TODO Auto-generated method stub
-		synchronized (listWriters) {
-			listWriters.remove(printWriter);
-		}
-	}
-
-	private void doMessage(String message) {
-		// TODO Auto-generated method stub
-		broadcast("message:" + message);
-	}
-
 	private void doJoin(String nickName, PrintWriter printWriter) {
 		// TODO Auto-generated method stub
 		this.nickname = nickName;
@@ -98,6 +77,31 @@ public class ChatServerThread extends Thread {
 		String data = nickName + "님이 참여하였습니다.";
 		broadcast("message:" + data);
 		addWriter(printWriter);
+	}
+	private void doMessage(String message) {
+		// TODO Auto-generated method stub
+		broadcast("message:" + message);
+	}
+	private void doQuit(PrintWriter printWriter) {
+		// TODO Auto-generated method stub
+		removeWriter(printWriter);
+		String data = nickname + "님이 퇴장하였습니다.";
+		broadcast("quit:" + data);
+//		printWriter.println("quit:" + data);
+	}
+
+	private void addWriter(PrintWriter printWriter) {
+		// TODO Auto-generated method stub
+		synchronized (listWriters) {
+			listWriters.add(printWriter);
+		}
+	}
+	
+	private void removeWriter(PrintWriter printWriter) {
+		// TODO Auto-generated method stub
+		synchronized (listWriters) {
+			listWriters.remove(printWriter);
+		}
 	}
 
 	private void broadcast(String data) {
@@ -111,13 +115,6 @@ public class ChatServerThread extends Thread {
 		}
 	}
 
-	private void addWriter(PrintWriter printWriter) {
-		// TODO Auto-generated method stub
-		synchronized (listWriters) {
-			listWriters.add(printWriter);
-		}
-	}
-	
 	public void consoleLog(String message) {
 		System.out.println(nickname + ">> " + message);
 	}
